@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Filter = ({ value, onChange }) => {
   return (
@@ -44,6 +45,12 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterValue, setFilterValue] = useState('')
+
+  useEffect(() => axios
+    .get('http://localhost:3001/persons')
+    .then(response => {
+      setPersons(response.data)
+    }), [])
 
   const isNameExist = (newPerson) => {
     return persons.some(person => person.name === newPerson.name)

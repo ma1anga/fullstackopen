@@ -17,3 +17,6 @@ Content-Type: application/json
   "name": "Da Abramov", 
   "number": "12-43-234345"
 }
+
+###
+GET https://phonebook-backend-bold-water-2846.fly.dev/api/persons

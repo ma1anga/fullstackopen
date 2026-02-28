@@ -1,21 +1,29 @@
 GET http://localhost:3001/api/persons
 
 ###
-GET http://localhost:3001/api/persons/69a0e03d61b592b0b7ddfac5
+GET http://localhost:3001/api/persons/69a360e8aa06da2c3aa66d61
 
 ###
 GET http://localhost:3001/info
 
 ###
-DELETE http://localhost:3001/api/persons/69a352dc400ee8e0cae7e2f7
+DELETE http://localhost:3001/api/persons/69a35ff6aa06da2c3aa66d4a
 
 ###
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 { 
-  "name": "Pavlo Bilousov", 
+  "name": "Dam Abraamov", 
   "number": "12-43-234345"
+}
+
+###
+PUT http://localhost:3001/api/persons/69a36000aa06da2c3aa66d4c
+Content-Type: application/json
+
+{ 
+  "number": "999"
 }
 
 ###

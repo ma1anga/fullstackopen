@@ -10,7 +10,7 @@ const app = express()
 app.use(express.json())
 app.use(express.static('dist'))
 
-morgan.token('post-data', (req, res) => JSON.stringify(req.body))
+morgan.token('post-data', req => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post-data'))
 
 app.post('/api/persons', (request, response, next) => {
@@ -80,14 +80,14 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.get('/info', (request, response, next) => {
-  const receivedDateTime = new Date();
+  const receivedDateTime = new Date()
 
   Person.countDocuments().then(total => {
     response.send(`
       <p>Phonebook has info for ${total} people</p>
       <p>${receivedDateTime}</p>
   `)
-  }).catch(error => next(error)) 
+  }).catch(error => next(error))
 })
 
 const errorHandler = (error, request, response, next) => {

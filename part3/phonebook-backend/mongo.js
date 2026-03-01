@@ -17,25 +17,25 @@ const Person = mongoose.model('Person', personSchema)
 
 
 if (nameInput && numberInput) {
-  console.log("Arguments for create specified. Creating...");
-  
+  console.log('Arguments for create specified. Creating...')
+
   const person = new Person({
     name: nameInput,
     number: numberInput
   })
 
   person.save().then(result => {
-    console.log(`Added ${result.name} number ${result.number} to phonebook`);
+    console.log(`Added ${result.name} number ${result.number} to phonebook`)
     mongoose.connection.close()
   })
 } else {
-  console.log("No args. Listing phonebook...")
+  console.log('No args. Listing phonebook...')
 
   Person.find({}).then(result => {
-    console.log("phonebook:");
-    
+    console.log('phonebook:')
+
     result.forEach(person => {
-      console.log(`${person.name} ${person.number}`); 
+      console.log(`${person.name} ${person.number}`)
     })
 
     mongoose.connection.close()

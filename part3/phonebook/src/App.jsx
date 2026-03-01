@@ -51,11 +51,13 @@ const App = () => {
         setNotificationMessage(`Added ${savedPerson.name}`)
         setTimeout(() => setNotificationMessage(null), 5000)
       })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(() => setErrorMessage(null), 5000)
+      })
 
     setNewName('')
     setNewNumber('')
-
-
   }
 
   const updatePerson = (id, newPerson) => {
@@ -71,9 +73,17 @@ const App = () => {
         setNotificationMessage(`Updated ${updatedPerson.name}`)
         setTimeout(() => setNotificationMessage(null), 5000)
       })
-      .catch(() => {
-        setErrorMessage(`Information of ${newPerson.name} has already been removed from the server`)
-        setTimeout(() => setErrorMessage(null), 5000)
+      .catch(error => {
+        if (error.response.status === 404) {
+          setErrorMessage(`Information of ${newPerson.name} has already been removed from the server`)
+          setTimeout(() => setErrorMessage(null), 5000)
+        } else if (error.response.status === 400) {
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => setErrorMessage(null), 5000)
+        } else {
+          setErrorMessage("Internal Server Error")
+          setTimeout(() => setErrorMessage(null), 5000)
+        }
 
         setNewName('')
         setNewNumber('')

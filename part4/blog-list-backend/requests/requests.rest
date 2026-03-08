@@ -10,3 +10,15 @@ Content-Type: application/json
   "url": "https://blogs.com/221",
   "likes": 999
 }
+
+###
+DELETE  http://localhost:3003/api/blogs/69ab378bbf68668b4ac65764
+
+###
+PUT http://localhost:3003/api/blogs/69ab378bbf68668b4ac65764
+Content-Type: application/json
+
+{
+  "title": "BRAND NEW TITLE",
+  "likes": 22
+}

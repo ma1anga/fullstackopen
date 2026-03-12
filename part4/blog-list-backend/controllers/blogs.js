@@ -1,52 +1,63 @@
 const blogsRouter = require('express').Router()
+const middleware = require('../utils/middleware')
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
   response.json(blogs)
 })
 
-blogsRouter.post('/', async (request, response) => {
-  const users = await User.find({})
-  const firstUser = users[0]
-  
+blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
+  const user = request.user
+
   const blog = new Blog({
     ...request.body,
-    user: firstUser.id
+    user: user.id
   })
 
   const savedBlog = await blog.save()
 
-  firstUser.blogs = firstUser.blogs.concat(savedBlog._id)
-  await firstUser.save()
+  user.blogs = user.blogs.concat(savedBlog._id)
+  await user.save()
 
   response.status(201).json(savedBlog)
 })
 
-blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()
+blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+
+  if (!blog) {
+    return response.status(404).end()
+  }
+
+  if (blog.user.toString() === request.user._id.toString()) {
+    await blog.deleteOne()
+    response.status(204).end()
+  } else {
+    response.status(400).json({ error: 'Only the blog creator can delete this blog' })
+  }
 })
 
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
   const blog = await Blog.findById(request.params.id)
 
   if (!blog) {
-    response.status(404).end()
-
-    return
+    return response.status(404).end()
   }
 
-  blog.title = title ?? blog.title
-  blog.author = author ?? blog.author
-  blog.url = url ?? blog.url
-  blog.likes = likes ?? blog.likes
+  if (blog.user.toString() === request.user._id.toString()) {
+    blog.title = title ?? blog.title
+    blog.author = author ?? blog.author
+    blog.url = url ?? blog.url
+    blog.likes = likes ?? blog.likes
 
-  const updatedBlog = await blog.save()
+    const updatedBlog = await blog.save()
 
-  response.json(updatedBlog)
+    response.json(updatedBlog)
+  } else {
+    response.status(400).json({ error: 'Only the blog creator can edit this blog' })
+  }
 })
 
 module.exports = blogsRouter

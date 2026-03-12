@@ -5,12 +5,18 @@ const supertest = require('supertest')
 const app = require('../app')
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
 
+let loginToken
+
 beforeEach(async () => {
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await User.deleteMany({})
+
+  await helper.setupBlogs()
+  loginToken = await getToken()
 })
 
 describe('get API', () => {
@@ -40,9 +46,10 @@ describe('get API', () => {
 })
 
 describe('post API', () => {
-  test('a blog can be added', async () => {
+  test('a blog can be added with valid token', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginToken}`)
       .send(helper.additionalBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -54,6 +61,17 @@ describe('post API', () => {
     assert(titles.includes('Building REST APIs with Node.js'))
   })
 
+  test('returns 401 Unauthorized if a token is not provided', async () => {
+    await api
+      .post('/api/blogs')
+      .send(helper.additionalBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAtEnd = await Blog.find({})
+    assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length)
+  })
+
   test('if no likes in request, defaults to 0', async () => {
     const noLikesBlog = {
       title: 'Building REST APIs with Node.js',
@@ -63,6 +81,7 @@ describe('post API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginToken}`)
       .send(noLikesBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -82,6 +101,7 @@ describe('post API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginToken}`)
       .send(invalidBlog)
       .expect(400)
   })
@@ -94,6 +114,7 @@ describe('post API', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', `Bearer ${loginToken}`)
       .send(invalidBlog)
       .expect(400)
   })
@@ -106,6 +127,7 @@ describe('delete API', () => {
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`)
+      .set('Authorization', `Bearer ${loginToken}`)
       .expect(204)
 
     const blogsAtEnd = await Blog.find({})
@@ -116,13 +138,14 @@ describe('delete API', () => {
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
   })
 
-  test('succeeds with status code 204 if blog DOES NOT exists', async () => {
+  test('succeeds with status code 404 if blog DOES NOT exists', async () => {
     const blogsAtStart = await Blog.find({})
     const nonExistingId = await helper.nonExistingId()
 
     await api
       .delete(`/api/blogs/${nonExistingId}`)
-      .expect(204)
+      .set('Authorization', `Bearer ${loginToken}`)
+      .expect(404)
 
     const blogsAtEnd = await Blog.find({})
 
@@ -132,6 +155,7 @@ describe('delete API', () => {
   test('fails with 400 if incorrect id', async () => {
     await api
       .delete(`/api/blogs/invalid`)
+      .set('Authorization', `Bearer ${loginToken}`)
       .expect(400)
   })
 })
@@ -147,6 +171,7 @@ describe('put API', () => {
 
     await api
       .put(`/api/blogs/${blogToUpdate.id}`)
+      .set('Authorization', `Bearer ${loginToken}`)
       .send(updatedFields)
       .expect(200)
 
@@ -163,6 +188,7 @@ describe('put API', () => {
 
     await api
       .put(`/api/blogs/${nonExistingId}`)
+      .set('Authorization', `Bearer ${loginToken}`)
       .send({})
       .expect(404)
   })
@@ -170,6 +196,7 @@ describe('put API', () => {
   test('fails with 400 if incorrect ID', async () => {
     await api
       .put('/api/blogs/incorrect')
+      .set('Authorization', `Bearer ${loginToken}`)
       .send({})
       .expect(400)
   })
@@ -178,3 +205,16 @@ describe('put API', () => {
 after(async () => {
   await mongoose.connection.close()
 })
+
+const getToken = async () => {
+  const loginResponse = await api
+    .post('/api/login')
+    .send({
+      username: helper.blogsUser.username,
+      password: helper.blogsUser.password
+    })
+    .expect(200)
+    .expect('Content-Type', /application\/json/)
+
+  return loginResponse.body.token
+}

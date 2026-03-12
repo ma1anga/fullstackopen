@@ -1,4 +1,6 @@
+const bcrypt = require('bcrypt')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const initialBlogs = [
   {
@@ -20,6 +22,18 @@ const additionalBlog = {
   author: 'Robert C. Martin',
   url: 'https://example.com/building-rest-apis-nodejs',
   likes: 5,
+}
+
+const blogsUser = {
+  username: 'blogsuser',
+  name: 'Blog User',
+  password: 'blog-password'
+}
+
+const blogsUserSecond = {
+  username: 'blogssecond',
+  name: 'Blog Second',
+  password: 'second-password'
 }
 
 const initialUsers = [
@@ -49,10 +63,39 @@ const nonExistingId = async () => {
   return blog._id.toString()
 }
 
+const setupBlogs = async () => {
+  const testUser = await createTestUser();
+
+  const blogDocs = await Blog.insertMany(
+    initialBlogs.map(blog => ({
+      ...blog,
+      user: testUser._id
+    }))
+  )
+
+  testUser.blogs = blogDocs.map(blog => blog._id)
+  await testUser.save()
+}
+
+const createTestUser = async () => {
+  const passwordHash = await bcrypt.hash(blogsUser.password, 10)
+
+  const user = new User({
+    username: blogsUser.username,
+    name: blogsUser.name,
+    passwordHash
+  })
+
+  return await user.save()
+}
+
 module.exports = {
   initialBlogs,
   additionalBlog,
+  blogsUser,
+  blogsUserSecond,
   initialUsers,
   additionalUser,
-  nonExistingId
+  nonExistingId,
+  setupBlogs
 }

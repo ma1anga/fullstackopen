@@ -1,6 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
@@ -11,6 +14,8 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+
+  const createBlogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -55,6 +60,7 @@ const App = () => {
 
   const handleCreateBlog = async blog => {
     try {
+      createBlogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(blog)
 
       setBlogs(blogs.concat(createdBlog))
@@ -66,13 +72,49 @@ const App = () => {
     }
   }
 
+  const handleBlogLike = async blogId => {
+    const blog = blogs.find(b => b.id === blogId)
+    const newLikesCount = blog.likes + 1
+
+    const updatedBlog = {
+      ...blog,
+      likes: newLikesCount,
+      user: blog.user.id
+    }
+
+    const savedBlog = await blogService.update(updatedBlog.id, updatedBlog)
+
+    setBlogs(
+      blogs.map(blog => blog.id === savedBlog.id ? savedBlog : blog)
+    )
+  }
+
+  const handleBlogDelete = async blogId => {
+    const blogToDelete = blogs.find(b => b.id === blogId)
+    const deletionConfirmed = confirm(`Remove blog "${blogToDelete.title}" by ${blogToDelete.author}?`)
+    
+    if (deletionConfirmed) {
+      await blogService.remove(blogToDelete.id)
+      
+      setBlogs(blogs.filter(b => b.id !== blogToDelete.id))
+      setNotificationMessage(`A blog "${blogToDelete.title}" was deleted`)
+      setTimeout(() => setNotificationMessage(null), 3000)
+    }
+  }
+
   const getLoginForm = () => (<LoginForm handleLogin={handleLogin} />)
   const getBlogs = () => (
     <div>
       <h2>blogs</h2>
       <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <CreateBlog handleCreate={handleCreateBlog} />
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+      <Togglable buttonLabel='create new blog' ref={createBlogFormRef}>
+        <CreateBlog handleCreate={handleCreateBlog} />
+      </Togglable>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+        <motion.div key={blog.id} layout>
+          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete}/>
+        </motion.div>
+      )}
     </div>
   )
 

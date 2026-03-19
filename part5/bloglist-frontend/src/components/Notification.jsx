@@ -1,9 +1,9 @@
 const Notification = ({ message, isError }) => {
   const notificationStyle = {
-    color: isError ? "red" : "green",
-    background: "lightgrey",
+    color: isError ? 'red' : 'green',
+    background: 'lightgrey',
     fontSize: 20,
-    borderStyle: "solid",
+    borderStyle: 'solid',
     borderRadius: 5,
     padding: 10,
     marginBottom: 10,

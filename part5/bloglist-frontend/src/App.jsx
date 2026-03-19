@@ -92,10 +92,10 @@ const App = () => {
   const handleBlogDelete = async blogId => {
     const blogToDelete = blogs.find(b => b.id === blogId)
     const deletionConfirmed = confirm(`Remove blog "${blogToDelete.title}" by ${blogToDelete.author}?`)
-    
+
     if (deletionConfirmed) {
       await blogService.remove(blogToDelete.id)
-      
+
       setBlogs(blogs.filter(b => b.id !== blogToDelete.id))
       setNotificationMessage(`A blog "${blogToDelete.title}" was deleted`)
       setTimeout(() => setNotificationMessage(null), 3000)

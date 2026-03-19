@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const Blog = ({ blog, onLike, onDelete }) => {
   const blogStyle = {
@@ -18,14 +18,14 @@ const Blog = ({ blog, onLike, onDelete }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {blog.author} <button onClick={toggleDetails}>{showDetails ? 'hide' : 'view'}</button>
-      {showDetails ? 
-      <div>
-        {blog.url} <br/>
+      {showDetails ?
+        <div>
+          {blog.url} <br/>
         likes: {blog.likes} <button onClick={() => onLike(blog.id)}>like</button> <br/>
-        {blog.author} <br/>
-        <button onClick={() => onDelete(blog.id)}>remove</button>
-      </div>
-      : null}
+          {blog.author} <br/>
+          <button onClick={() => onDelete(blog.id)}>remove</button>
+        </div>
+        : null}
     </div>
   )
 }

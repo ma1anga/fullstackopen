@@ -1,0 +1,27 @@
+GET http://localhost:3003/api/blogs
+
+###
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJiIiwiaWQiOiI2OWIyMDFhMzRlYjRiM2I5MWEzMjEwZmUiLCJpYXQiOjE3NzMyNzM3MDF9.aQJfoS0SP6K4hBr194B7TwZcmaP-3EEbZ1MJfmSDSDM
+
+{
+  "title": "Oldest Game Ever...",
+  "author": "Jocj Lowery",
+  "url": "https://111.com/221",
+  "likes": 1
+}
+
+###
+DELETE  http://localhost:3003/api/blogs/69b20294e5abb84a3176fd80
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJiIiwiaWQiOiI2OWIyMDFhMzRlYjRiM2I5MWEzMjEwZmUiLCJpYXQiOjE3NzMyNzM3MDF9.aQJfoS0SP6K4hBr194B7TwZcmaP-3EEbZ1MJfmSDSDM
+
+###
+PUT http://localhost:3003/api/blogs/69b20294e5abb84a3176fd80
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJiIiwiaWQiOiI2OWIyMDFhMzRlYjRiM2I5MWEzMjEwZmUiLCJpYXQiOjE3NzMyNzM3MDF9.aQJfoS0SP6K4hBr194B7TwZcmaP-3EEbZ1MJfmSDSDM
+
+{
+  "title": "BRAND NEW TITLE",
+  "likes": 22
+}

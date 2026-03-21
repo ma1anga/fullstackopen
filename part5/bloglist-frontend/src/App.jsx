@@ -40,6 +40,7 @@ const App = () => {
       window.localStorage.setItem(
         'loggedNoteappUser', JSON.stringify(user)
       )
+      blogService.setToken(user.token)
       setUser(user)
 
       setNotificationMessage(`A user "${user.name}" was succesfully logged in`)
@@ -112,7 +113,7 @@ const App = () => {
       </Togglable>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <motion.div key={blog.id} layout>
-          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete}/>
+          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete} />
         </motion.div>
       )}
     </div>

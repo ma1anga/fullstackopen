@@ -113,7 +113,7 @@ const App = () => {
       </Togglable>
       {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <motion.div key={blog.id} layout>
-          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete} />
+          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete} deleteVisible={blog.user.username === user.username} />
         </motion.div>
       )}
     </div>

@@ -20,7 +20,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  response.status(201).json(savedBlog)
+  response.status(201).json(await savedBlog.populate('user', { username: 1, name: 1 }))
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
@@ -54,7 +54,7 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
 
     const updatedBlog = await blog.save()
 
-    response.json(updatedBlog)
+    response.json(await updatedBlog.populate('user', { username: 1, name: 1 }))
   } else {
     response.status(400).json({ error: 'Only the blog creator can edit this blog' })
   }

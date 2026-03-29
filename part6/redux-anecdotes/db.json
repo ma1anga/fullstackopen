@@ -3,7 +3,7 @@
     {
       "id": "1",
       "content": "If it hurts, do it more often",
-      "votes": 0
+      "votes": 14
     },
     {
       "id": "2",
@@ -44,6 +44,21 @@
       "content": "wwwww",
       "votes": 0,
       "id": "ZjOmkPPapW0"
+    },
+    {
+      "content": "www",
+      "votes": 0,
+      "id": "iwL8NgN2tao"
+    },
+    {
+      "content": "Appending a new anecdote",
+      "votes": 13,
+      "id": "29ccLIF3KfQ"
+    },
+    {
+      "content": "aaa",
+      "votes": 29,
+      "id": "kDwWMy4FLk4"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

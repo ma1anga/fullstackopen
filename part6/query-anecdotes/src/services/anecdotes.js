@@ -4,7 +4,9 @@ const getAll = async () => {
   const response = await fetch(baseUrl)
 
   if (!response.ok) {
-    throw new Error('Failed to fetch notes')
+    const errorResponse = await response.json()
+    
+    throw new Error(errorResponse.error)
   }
 
   return await response.json()
@@ -20,7 +22,9 @@ const createNew = async content => {
   const response = await fetch(baseUrl, options)
 
   if (!response.ok) {
-    throw new Error('Failed to create note')
+    const errorResponse = await response.json()
+    
+    throw new Error(errorResponse.error)
   }
 
   return await response.json()
@@ -36,7 +40,9 @@ const update = async anecdote => {
   const response = await fetch(`${baseUrl}/${anecdote.id}`, options)
 
   if (!response.ok) {
-    throw new Error('Failed to create note')
+    const errorResponse = await response.json()
+    
+    throw new Error(errorResponse.error)
   }
 
   return await response.json()

@@ -1,40 +1,52 @@
-import { beforeEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from '../../src/components/Blog'
 
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom')
+
+  return {
+    ...actual,
+    useParams: () => ({ id: '123' })
+  }
+})
 
 describe('<Blog />', () => {
   const handleLikeMock = vi.fn()
 
-  const blog = {
-    title: 'Test blog',
-    author: 'Author Test',
-    url: 'https://test-blog.article',
-    likes: 5
+  const ownerUser = {
+    username: 'usera'
   }
+  const anotherUser = {
+    username: 'userb'
+  }
+  const blogs = [
+    {
+      id: '123',
+      title: 'Test blog',
+      author: 'Author Test',
+      url: 'https://test-blog.article',
+      likes: 5,
+      user: ownerUser
+    },
+    {
+      id: '234',
+      title: 'Second blog',
+      author: 'Author 2nd',
+      url: 'https://second-blog.com',
+      likes: 2
+    }
+  ]
+  const blog = blogs[0]
 
   beforeEach(() => {
-    render(<Blog blog={blog} onLike={handleLikeMock} />)
+    render(<Blog blogs={blogs} onLike={handleLikeMock} />)
   })
 
-  test('renders minimal content by default', () => {
-    const blogDiv = screen.getByText(blog.title, { exact: false })
 
-    expect(blogDiv).toHaveTextContent(blog.title)
-    expect(blogDiv).toHaveTextContent(blog.author)
-
-    expect(blogDiv).not.toHaveTextContent(blog.likes)
-    expect(blogDiv).not.toHaveTextContent(blog.url)
-  })
-
-  test('renders full details if "view" button clicked', async () => {
-    const blogDiv = screen.getByText(blog.title, { exact: false })
-
-    const user = userEvent.setup()
-    const button = screen.getByText('view')
-
-    await user.click(button)
+  test('blog information is displayed for unauthenticated user', () => {
+    const blogDiv = screen.getByText(blog.title, { exact: false }).parentElement
 
     expect(blogDiv).toHaveTextContent(blog.title)
     expect(blogDiv).toHaveTextContent(blog.author)
@@ -43,12 +55,38 @@ describe('<Blog />', () => {
     expect(blogDiv).toHaveTextContent(blog.url)
   })
 
+  test('buttons are not displayed for unauthenticated user', () => {
+    const likeButton = screen.queryByRole('button', { name: 'like' })
+    const removeButton = screen.queryByRole('button', { name: 'remove' })
+
+    expect(likeButton).not.toBeInTheDocument()
+    expect(removeButton).not.toBeInTheDocument()
+  })
+
+  test('authenticated user, but not an owner, sees only "like" button', async () => {
+    render(<Blog blogs={blogs} user={anotherUser} onLike={handleLikeMock} />)
+
+    const likeButton = screen.queryByRole('button', { name: 'like' })
+    const removeButton = screen.queryByRole('button', { name: 'remove' })
+
+    expect(likeButton).toBeInTheDocument()
+    expect(removeButton).not.toBeInTheDocument()
+  })
+
+  test('authenticated user, who is an owner, sees both "like" and "remove" buttons', async () => {
+    render(<Blog blogs={blogs} user={ownerUser} onLike={handleLikeMock} />)
+
+    const likeButton = screen.queryByRole('button', { name: 'like' })
+    const removeButton = screen.queryByRole('button', { name: 'remove' })
+
+    expect(likeButton).toBeInTheDocument()
+    expect(removeButton).toBeInTheDocument()
+  })
+
   test('if like pressed two times, handler called two times', async () => {
+    render(<Blog blogs={blogs} user={anotherUser} onLike={handleLikeMock} />)
+
     const user = userEvent.setup()
-    const viewButton = screen.getByText('view')
-
-    await user.click(viewButton)
-
     const likeButton = screen.getByText('like')
 
     await user.click(likeButton)
@@ -57,6 +95,3 @@ describe('<Blog />', () => {
     expect(handleLikeMock.mock.calls).toHaveLength(2)
   })
 })
-
-
-

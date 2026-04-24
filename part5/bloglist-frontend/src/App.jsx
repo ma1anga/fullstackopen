@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 // eslint-disable-next-line no-unused-vars
-import { motion } from 'framer-motion'
+import { Link, Route, Routes, useNavigate } from 'react-router-dom'
+import Blogs from './components/Blogs'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -14,8 +15,7 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
-
-  const createBlogFormRef = useRef()
+  const navigate = useNavigate()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -44,6 +44,7 @@ const App = () => {
       setUser(user)
 
       setNotificationMessage(`A user "${user.name}" was succesfully logged in`)
+      navigate('/')
       setTimeout(() => setNotificationMessage(null), 3000)
     } catch (error) {
       setErrorMessage(`Login failed: ${error.response.data.error}`)
@@ -56,16 +57,17 @@ const App = () => {
     window.localStorage.removeItem('loggedNoteappUser')
 
     setNotificationMessage(`A user "${user.name}" was succesfully logged out`)
+    navigate('/')
     setTimeout(() => setNotificationMessage(null), 3000)
   }
 
   const handleCreateBlog = async blog => {
     try {
-      createBlogFormRef.current.toggleVisibility()
       const createdBlog = await blogService.create(blog)
 
       setBlogs(blogs.concat(createdBlog))
       setNotificationMessage(`A new blog "${createdBlog.title}" added`)
+      navigate('/')
       setTimeout(() => setNotificationMessage(null), 3000)
     } catch (error) {
       setErrorMessage(`Failed to add a new blog: ${error.response.data.error}`)
@@ -99,25 +101,14 @@ const App = () => {
 
       setBlogs(blogs.filter(b => b.id !== blogToDelete.id))
       setNotificationMessage(`A blog "${blogToDelete.title}" was deleted`)
+      navigate('/')
       setTimeout(() => setNotificationMessage(null), 3000)
     }
   }
 
-  const getLoginForm = () => (<LoginForm handleLogin={handleLogin} />)
-  const getBlogs = () => (
-    <div>
-      <h2>blogs</h2>
-      <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
-      <Togglable buttonLabel='create new blog' ref={createBlogFormRef}>
-        <CreateBlog handleCreate={handleCreateBlog} />
-      </Togglable>
-      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-        <motion.div key={blog.id} layout>
-          <Blog blog={blog} onLike={handleBlogLike} onDelete={handleBlogDelete} deleteVisible={blog.user.username === user.username} />
-        </motion.div>
-      )}
-    </div>
-  )
+  const linkPadding = {
+    padding: 5
+  }
 
   return (
     <>
@@ -125,8 +116,32 @@ const App = () => {
         message={errorMessage ? errorMessage : notificationMessage}
         isError={errorMessage ? true : false}
       />
-      {!user && getLoginForm()}
-      {user && getBlogs()}
+
+      <div>
+        <Link style={linkPadding} to="/">blogs</Link>
+        {user && <Link style={linkPadding} to="/create">new blog</Link>}
+        {
+          user
+            ? <button onClick={handleLogout}>logout</button>
+            : <Link style={linkPadding} to="/login">login</Link>
+        }
+      </div>
+
+      <Routes>
+        <Route path="/login" element={
+          <LoginForm handleLogin={handleLogin} />
+        } />
+        <Route path="/" element={<Blogs blogs={blogs} />} />
+        <Route path="/create" element={<CreateBlog handleCreate={handleCreateBlog} />} />
+        <Route path="/blogs/:id" element={
+          <Blog
+            blogs={blogs}
+            user={user}
+            onLike={handleBlogLike}
+            onDelete={handleBlogDelete}
+          />
+        } />
+      </Routes>
     </>
   )
 }

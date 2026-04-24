@@ -1,33 +1,30 @@
-import { useState } from 'react'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog, onLike, onDelete, deleteVisible }) => {
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    margin: 5,
-  }
+const Blog = ({ blogs, user, onLike, onDelete }) => {
+  const { id } = useParams()
 
-  const [showDetails, setShowDetails] = useState(false)
+  const blog = blogs.find(b => b.id === id)
 
-  const toggleDetails = () => {
-    setShowDetails(!showDetails)
+  if (!blog) {
+    return <div>Blog with id '{id}' was not found</div>
   }
 
   return (
-    <div className='blog' style={blogStyle}>
-      {blog.title} {blog.author} <button onClick={toggleDetails}>{showDetails ? 'hide' : 'view'}</button>
-      {showDetails ?
-        <div className='blog-details'>
-          {blog.url} <br />
-          likes: {blog.likes} <button onClick={() => onLike(blog.id)}>like</button> <br />
-          {blog.author} <br />
-          {deleteVisible && (
-            <button onClick={() => onDelete(blog.id)}>remove</button>
-          )}
-        </div>
-        : null}
+    <div className='blog'>
+      <h2>{blog.title}</h2>
+
+      <div>
+        <a href={blog.url}>{blog.url}</a> <br />
+        likes: {blog.likes}
+        {
+          user && <button disabled={!user} onClick={() => onLike(blog.id)}>like</button>
+        } <br />
+        Added by {blog.author} <br />
+        {user && user.username === blog.user.username && (
+          <button onClick={() => onDelete(blog.id)}>remove</button>
+        )}
+      </div>
+
     </div>
   )
 }

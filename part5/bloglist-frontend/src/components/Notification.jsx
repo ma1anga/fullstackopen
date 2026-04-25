@@ -1,22 +1,14 @@
-const Notification = ({ message, isError }) => {
-  const notificationStyle = {
-    color: isError ? 'red' : 'green',
-    background: 'lightgrey',
-    fontSize: 20,
-    borderStyle: 'solid',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-  }
+import { Alert } from '@mui/material'
 
+const Notification = ({ message, isError }) => {
   if (message === null) {
     return null
   }
 
   return (
-    <div style={notificationStyle}>
+    <Alert style={{ marginTop: 10, marginBottom: 10 }} severity={isError ? 'error' : 'success'}>
       {message}
-    </div>
+    </Alert>
   )
 }
 

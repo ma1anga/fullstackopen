@@ -1,4 +1,14 @@
 import { useParams } from 'react-router-dom'
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Link,
+  Stack,
+  Typography
+} from '@mui/material'
 
 const Blog = ({ blogs, user, onLike, onDelete }) => {
   const { id } = useParams()
@@ -6,26 +16,51 @@ const Blog = ({ blogs, user, onLike, onDelete }) => {
   const blog = blogs.find(b => b.id === id)
 
   if (!blog) {
-    return <div>Blog with id '{id}' was not found</div>
+    return <Typography sx={{ mt: 3 }}>Blog with id '{id}' was not found</Typography>
   }
 
+  const canDelete = user && user.username === blog.user.username
+
   return (
-    <div className='blog'>
-      <h2>{blog.title}</h2>
+    <Box className='blog' sx={{ maxWidth: 640, mx: 'auto', mt: 4, px: 2 }}>
+      <Card elevation={3}>
+        <CardContent className='blog-details'>
+          <Typography variant='h4' component='h2'>
+            {blog.title}
+          </Typography>
 
-      <div className='blog-details'>
-        <a href={blog.url}>{blog.url}</a> <br />
-        likes: {blog.likes}
-        {
-          user && <button disabled={!user} onClick={() => onLike(blog.id)}>like</button>
-        } <br />
-        Added by {blog.author} <br />
-        {user && user.username === blog.user.username && (
-          <button onClick={() => onDelete(blog.id)}>remove</button>
-        )}
-      </div>
+          <Typography variant='subtitle1' color='text.secondary'>
+            Added by {blog.author}
+          </Typography>
 
-    </div>
+          <Link
+            href={blog.url}
+            underline='hover'
+          >
+            {blog.url}
+          </Link>
+
+          <Typography>
+            likes: {blog.likes}
+          </Typography>
+        </CardContent>
+
+        <CardActions>
+          {
+            user &&
+            <Button variant='contained' size='small' onClick={() => onLike(blog.id)}>
+              like
+            </Button>
+          }
+          {
+            canDelete &&
+            <Button color='error' onClick={() => onDelete(blog.id)}>
+              remove
+            </Button>
+          }
+        </CardActions>
+      </Card>
+    </Box>
   )
 }
 

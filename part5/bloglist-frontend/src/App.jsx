@@ -9,6 +9,7 @@ import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { AppBar, Button, Toolbar, Typography } from '@mui/material'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -106,26 +107,27 @@ const App = () => {
     }
   }
 
-  const linkPadding = {
-    padding: 5
-  }
-
   return (
     <>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            Blog App
+          </Typography>
+          <Button color="inherit" component={Link} to="/">blogs</Button>
+          {user && <Button color="inherit" component={Link} to="/create">new blog</Button>}
+          {
+            user
+              ? <Button color="inherit" onClick={handleLogout}>logout</Button>
+              : <Button color="inherit" component={Link} to="/login">login</Button>
+          }
+        </Toolbar>
+      </AppBar>
+
       <Notification
         message={errorMessage ? errorMessage : notificationMessage}
         isError={errorMessage ? true : false}
       />
-
-      <div>
-        <Link style={linkPadding} to="/">blogs</Link>
-        {user && <Link style={linkPadding} to="/create">new blog</Link>}
-        {
-          user
-            ? <button onClick={handleLogout}>logout</button>
-            : <Link style={linkPadding} to="/login">login</Link>
-        }
-      </div>
 
       <Routes>
         <Route path="/login" element={

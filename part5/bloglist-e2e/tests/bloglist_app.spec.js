@@ -47,8 +47,6 @@ describe('Blog app', () => {
       await loginWith(page, 'testuser', 'incorrect')
 
       const errorNotification = page.getByText('Login failed: invalid')
-      await expect(errorNotification).toHaveCSS('border-style', 'solid')
-      await expect(errorNotification).toHaveCSS('color', 'rgb(255, 0, 0)')
       await expect(errorNotification).toContainText('invalid username or password')
 
       await expect(page.getByText(succesfullLoginNotificationText)).not.toBeVisible()

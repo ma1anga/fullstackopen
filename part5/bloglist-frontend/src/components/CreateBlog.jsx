@@ -1,3 +1,4 @@
+import { Button, TextField } from '@mui/material'
 import { useState } from 'react'
 
 const CreateBlog = ({ handleCreate }) => {
@@ -17,36 +18,36 @@ const CreateBlog = ({ handleCreate }) => {
         setUrl('')
       }}>
         <div>
-          <label>
-            title:
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </label>
+          <TextField
+            label='title'
+            type='text'
+            value={title}
+            onChange={({ target }) => setTitle(target.value)}
+            margin='dense'
+            size='small'
+          />
         </div>
         <div>
-          <label>
-            author:
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </label>
+          <TextField
+            label='author'
+            type='text'
+            value={author}
+            onChange={({ target }) => setAuthor(target.value)}
+            margin='dense'
+            size='small'
+          />
         </div>
         <div>
-          <label>
-            url:
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </label>
+          <TextField
+            label='url'
+            type='text'
+            value={url}
+            onChange={({ target }) => setUrl(target.value)}
+            margin='dense'
+            size='small'
+          />
         </div>
-        <button type="submit">create</button>
+        <Button variant='contained' size='small' type='submit'>create</Button>
       </form>
     </>
   )

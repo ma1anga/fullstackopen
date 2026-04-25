@@ -13,7 +13,7 @@ const Blog = ({ blogs, user, onLike, onDelete }) => {
     <div className='blog'>
       <h2>{blog.title}</h2>
 
-      <div>
+      <div className='blog-details'>
         <a href={blog.url}>{blog.url}</a> <br />
         likes: {blog.likes}
         {

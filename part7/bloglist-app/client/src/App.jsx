@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 import { ErrorBoundary } from 'react-error-boundary'
 import Blogs from './components/Blogs'
+import Users from './components/Users'
+import User from './components/User'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -14,16 +16,20 @@ import NotFoundError from './components/NotFoundError'
 import { useNotificationStore } from './stores/notificationStore'
 import useBlogStore from './stores/blogStore'
 import { useUserStore } from './stores/userStore'
+import { useUserListStore } from './stores/userListStore'
 
 const App = () => {
   const navigate = useNavigate()
+
   const { setNotification, clearNotification } = useNotificationStore()
   const { initializeBlogs } = useBlogStore()
+  const { initializeUsers } = useUserListStore()
   const { user, logoutUser } = useUserStore()
 
   useEffect(() => {
     initializeBlogs()
-  }, [initializeBlogs])
+    initializeUsers()
+  }, [initializeBlogs, initializeUsers])
 
   useEffect(() => {
     if (user) {
@@ -52,6 +58,9 @@ const App = () => {
           <Button color="inherit" component={Link} to="/">
             blogs
           </Button>
+          <Button color="inherit" component={Link} to="/users">
+            users
+          </Button>
           {user && (
             <Button color="inherit" component={Link} to="/create">
               new blog
@@ -77,6 +86,8 @@ const App = () => {
           <Route path="/" element={<Blogs />} />
           <Route path="/create" element={<CreateBlog />} />
           <Route path="/blogs/:id" element={<Blog />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
           <Route path="*" element={<NotFoundError />} />
         </Routes>
       </ErrorBoundary>

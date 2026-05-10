@@ -1,10 +1,34 @@
 import { Button, TextField } from '@mui/material'
-import { useState } from 'react'
+import useBlogStore from '../stores/blogStore'
+import { useNotificationStore } from '../stores/notificationStore'
+import { useNavigate } from 'react-router-dom'
+import { useField } from '../hooks'
 
-const CreateBlog = ({ handleCreate }) => {
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+const CreateBlog = () => {
+  const navigate = useNavigate()
+
+  const [title] = useField('title', 'text')
+  const [author] = useField('author', 'text')
+  const [url] = useField('url', 'text')
+
+  const { createBlog } = useBlogStore()
+  const { setNotification, clearNotification } = useNotificationStore()
+
+  const handleCreateBlog = async (blog) => {
+    try {
+      await createBlog(blog)
+
+      setNotification(`A new blog "${blog.title}" added`, 'success')
+      navigate('/')
+      setTimeout(() => clearNotification(), 3000)
+    } catch (error) {
+      setNotification(
+        `Failed to add a new blog: ${error.response.data.error}`,
+        'error',
+      )
+      setTimeout(() => clearNotification(), 3000)
+    }
+  }
 
   return (
     <>
@@ -12,42 +36,21 @@ const CreateBlog = ({ handleCreate }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault()
-
-          handleCreate({ title, author, url })
-          setTitle('')
-          setAuthor('')
-          setUrl('')
+          handleCreateBlog({
+            title: title.value,
+            author: author.value,
+            url: url.value,
+          })
         }}
       >
         <div>
-          <TextField
-            label="title"
-            type="text"
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-            margin="dense"
-            size="small"
-          />
+          <TextField {...title} margin="dense" size="small" />
         </div>
         <div>
-          <TextField
-            label="author"
-            type="text"
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-            margin="dense"
-            size="small"
-          />
+          <TextField {...author} margin="dense" size="small" />
         </div>
         <div>
-          <TextField
-            label="url"
-            type="text"
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-            margin="dense"
-            size="small"
-          />
+          <TextField {...url} margin="dense" size="small" />
         </div>
         <Button variant="contained" size="small" type="submit">
           create

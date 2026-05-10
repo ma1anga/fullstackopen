@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -9,9 +9,17 @@ import {
   Stack,
   Typography,
 } from '@mui/material'
+import useBlogStore from '../stores/blogStore'
+import { useNotificationStore } from '../stores/notificationStore'
+import { useUserStore } from '../stores/userStore'
 
-const Blog = ({ blogs, user, onLike, onDelete }) => {
+const Blog = () => {
   const { id } = useParams()
+  const navigate = useNavigate()
+
+  const { user } = useUserStore()
+  const { blogs, likeBlog, deleteBlog } = useBlogStore()
+  const { setNotification, clearNotification } = useNotificationStore()
 
   const blog = blogs.find((b) => b.id === id)
 
@@ -19,6 +27,20 @@ const Blog = ({ blogs, user, onLike, onDelete }) => {
     return (
       <Typography sx={{ mt: 3 }}>Blog with id '{id}' was not found</Typography>
     )
+  }
+
+  const handleBlogDelete = async () => {
+    const deletionConfirmed = confirm(
+      `Remove blog "${blog.title}" by ${blog.author}?`,
+    )
+
+    if (deletionConfirmed) {
+      await deleteBlog(blog)
+
+      setNotification(`A blog "${blog.title}" was deleted`, 'success')
+      navigate('/')
+      setTimeout(() => clearNotification(), 3000)
+    }
   }
 
   const canDelete = user && user.username === blog.user.username
@@ -47,13 +69,13 @@ const Blog = ({ blogs, user, onLike, onDelete }) => {
             <Button
               variant="contained"
               size="small"
-              onClick={() => onLike(blog.id)}
+              onClick={async () => await likeBlog(blog)}
             >
               like
             </Button>
           )}
           {canDelete && (
-            <Button color="error" onClick={() => onDelete(blog.id)}>
+            <Button color="error" onClick={handleBlogDelete}>
               remove
             </Button>
           )}

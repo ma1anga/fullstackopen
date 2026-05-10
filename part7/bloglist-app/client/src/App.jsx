@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Link, Route, Routes, useNavigate } from 'react-router-dom'
 import { ErrorBoundary } from 'react-error-boundary'
 import Blogs from './components/Blogs'
@@ -8,101 +8,38 @@ import Togglable from './components/Togglable'
 import CreateBlog from './components/CreateBlog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import { AppBar, Button, Toolbar, Typography } from '@mui/material'
 import FallbackError from './components/FallbackError'
 import NotFoundError from './components/NotFoundError'
+import { useNotificationStore } from './stores/notificationStore'
+import useBlogStore from './stores/blogStore'
+import { useUserStore } from './stores/userStore'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
   const navigate = useNavigate()
+  const { setNotification, clearNotification } = useNotificationStore()
+  const { initializeBlogs } = useBlogStore()
+  const { user, logoutUser } = useUserStore()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [])
+    initializeBlogs()
+  }, [initializeBlogs])
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
-
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
+    if (user) {
       blogService.setToken(user.token)
-      setUser(user)
     }
-  }, [])
+  }, [user])
 
-  const handleLogin = async (credentials) => {
-    try {
-      const user = await loginService.login(credentials)
+  const handleLogout = async () => {
+    await logoutUser()
 
-      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      setUser(user)
-
-      setNotificationMessage(`A user "${user.name}" was succesfully logged in`)
-      navigate('/')
-      setTimeout(() => setNotificationMessage(null), 3000)
-    } catch (error) {
-      setErrorMessage(`Login failed: ${error.response.data.error}`)
-      setTimeout(() => setErrorMessage(null), 3000)
-    }
-  }
-
-  const handleLogout = () => {
-    setUser(null)
-    window.localStorage.removeItem('loggedNoteappUser')
-
-    setNotificationMessage(`A user "${user.name}" was succesfully logged out`)
-    navigate('/')
-    setTimeout(() => setNotificationMessage(null), 3000)
-  }
-
-  const handleCreateBlog = async (blog) => {
-    try {
-      const createdBlog = await blogService.create(blog)
-
-      setBlogs(blogs.concat(createdBlog))
-      setNotificationMessage(`A new blog "${createdBlog.title}" added`)
-      navigate('/')
-      setTimeout(() => setNotificationMessage(null), 3000)
-    } catch (error) {
-      setErrorMessage(`Failed to add a new blog: ${error.response.data.error}`)
-      setTimeout(() => setErrorMessage(null), 3000)
-    }
-  }
-
-  const handleBlogLike = async (blogId) => {
-    const blog = blogs.find((b) => b.id === blogId)
-    const newLikesCount = blog.likes + 1
-
-    const updatedBlog = {
-      ...blog,
-      likes: newLikesCount,
-      user: blog.user.id,
-    }
-
-    const savedBlog = await blogService.update(updatedBlog.id, updatedBlog)
-
-    setBlogs(blogs.map((blog) => (blog.id === savedBlog.id ? savedBlog : blog)))
-  }
-
-  const handleBlogDelete = async (blogId) => {
-    const blogToDelete = blogs.find((b) => b.id === blogId)
-    const deletionConfirmed = confirm(
-      `Remove blog "${blogToDelete.title}" by ${blogToDelete.author}?`,
+    setNotification(
+      `A user "${user.name}" was succesfully logged out`,
+      'success',
     )
-
-    if (deletionConfirmed) {
-      await blogService.remove(blogToDelete.id)
-
-      setBlogs(blogs.filter((b) => b.id !== blogToDelete.id))
-      setNotificationMessage(`A blog "${blogToDelete.title}" was deleted`)
-      navigate('/')
-      setTimeout(() => setNotificationMessage(null), 3000)
-    }
+    navigate('/')
+    setTimeout(() => clearNotification(), 3000)
   }
 
   return (
@@ -132,33 +69,14 @@ const App = () => {
         </Toolbar>
       </AppBar>
 
-      <Notification
-        message={errorMessage ? errorMessage : notificationMessage}
-        isError={errorMessage ? true : false}
-      />
+      <Notification />
 
       <ErrorBoundary fallback={<FallbackError />}>
         <Routes>
-          <Route
-            path="/login"
-            element={<LoginForm handleLogin={handleLogin} />}
-          />
-          <Route path="/" element={<Blogs blogs={blogs} />} />
-          <Route
-            path="/create"
-            element={<CreateBlog handleCreate={handleCreateBlog} />}
-          />
-          <Route
-            path="/blogs/:id"
-            element={
-              <Blog
-                blogs={blogs}
-                user={user}
-                onLike={handleBlogLike}
-                onDelete={handleBlogDelete}
-              />
-            }
-          />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/" element={<Blogs />} />
+          <Route path="/create" element={<CreateBlog />} />
+          <Route path="/blogs/:id" element={<Blog />} />
           <Route path="*" element={<NotFoundError />} />
         </Routes>
       </ErrorBoundary>

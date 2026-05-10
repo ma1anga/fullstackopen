@@ -27,32 +27,32 @@ const additionalBlog = {
 const blogsUser = {
   username: 'blogsuser',
   name: 'Blog User',
-  password: 'blog-password'
+  password: 'blog-password',
 }
 
 const blogsUserSecond = {
   username: 'blogssecond',
   name: 'Blog Second',
-  password: 'second-password'
+  password: 'second-password',
 }
 
 const initialUsers = [
   {
     username: 'root',
     name: 'Superuser',
-    password: 'sekret1'
+    password: 'sekret1',
   },
   {
     username: 'johndoe',
     name: 'John Doe',
-    password: 'sekret2'
-  }
+    password: 'sekret2',
+  },
 ]
 
 const additionalUser = {
   username: 'janedoe',
   name: 'Jane Doe',
-  password: 'secret123'
+  password: 'secret123',
 }
 
 const nonExistingId = async () => {
@@ -64,16 +64,16 @@ const nonExistingId = async () => {
 }
 
 const setupBlogs = async () => {
-  const testUser = await createTestUser();
+  const testUser = await createTestUser()
 
   const blogDocs = await Blog.insertMany(
-    initialBlogs.map(blog => ({
+    initialBlogs.map((blog) => ({
       ...blog,
-      user: testUser._id
-    }))
+      user: testUser._id,
+    })),
   )
 
-  testUser.blogs = blogDocs.map(blog => blog._id)
+  testUser.blogs = blogDocs.map((blog) => blog._id)
   await testUser.save()
 }
 
@@ -83,7 +83,7 @@ const createTestUser = async () => {
   const user = new User({
     username: blogsUser.username,
     name: blogsUser.name,
-    passwordHash
+    passwordHash,
   })
 
   return await user.save()
@@ -97,5 +97,5 @@ module.exports = {
   initialUsers,
   additionalUser,
   nonExistingId,
-  setupBlogs
+  setupBlogs,
 }

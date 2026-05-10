@@ -12,7 +12,7 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
 
   const blog = new Blog({
     ...request.body,
-    user: user.id
+    user: user.id,
   })
 
   const savedBlog = await blog.save()
@@ -20,23 +20,31 @@ blogsRouter.post('/', middleware.userExtractor, async (request, response) => {
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
-  response.status(201).json(await savedBlog.populate('user', { username: 1, name: 1 }))
+  response
+    .status(201)
+    .json(await savedBlog.populate('user', { username: 1, name: 1 }))
 })
 
-blogsRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
+blogsRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
 
-  if (!blog) {
-    return response.status(404).end()
-  }
+    if (!blog) {
+      return response.status(404).end()
+    }
 
-  if (blog.user.toString() === request.user._id.toString()) {
-    await blog.deleteOne()
-    response.status(204).end()
-  } else {
-    response.status(400).json({ error: 'Only the blog creator can delete this blog' })
-  }
-})
+    if (blog.user.toString() === request.user._id.toString()) {
+      await blog.deleteOne()
+      response.status(204).end()
+    } else {
+      response
+        .status(400)
+        .json({ error: 'Only the blog creator can delete this blog' })
+    }
+  },
+)
 
 blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
@@ -56,7 +64,9 @@ blogsRouter.put('/:id', middleware.userExtractor, async (request, response) => {
 
     response.json(await updatedBlog.populate('user', { username: 1, name: 1 }))
   } else {
-    response.status(400).json({ error: 'Only the blog creator can edit this blog' })
+    response
+      .status(400)
+      .json({ error: 'Only the blog creator can edit this blog' })
   }
 })
 

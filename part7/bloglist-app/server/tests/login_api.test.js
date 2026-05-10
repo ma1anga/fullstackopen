@@ -16,7 +16,7 @@ beforeEach(async () => {
   const user = new User({
     username: helper.blogsUser.username,
     name: helper.blogsUser.name,
-    passwordHash
+    passwordHash,
   })
 
   await user.save()
@@ -28,7 +28,7 @@ describe('login API', () => {
       .post('/api/login')
       .send({
         username: helper.blogsUser.username,
-        password: helper.blogsUser.password
+        password: helper.blogsUser.password,
       })
       .expect(200)
       .expect('Content-Type', /application\/json/)
@@ -43,7 +43,7 @@ describe('login API', () => {
       .post('/api/login')
       .send({
         username: helper.blogsUser.username,
-        password: 'wrong-password'
+        password: 'wrong-password',
       })
       .expect(401)
       .expect('Content-Type', /application\/json/)
@@ -56,7 +56,7 @@ describe('login API', () => {
       .post('/api/login')
       .send({
         username: 'missing-user',
-        password: helper.blogsUser.password
+        password: helper.blogsUser.password,
       })
       .expect(401)
       .expect('Content-Type', /application\/json/)

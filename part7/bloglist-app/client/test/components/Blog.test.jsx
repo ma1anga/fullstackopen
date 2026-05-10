@@ -8,7 +8,7 @@ vi.mock('react-router-dom', async () => {
 
   return {
     ...actual,
-    useParams: () => ({ id: '123' })
+    useParams: () => ({ id: '123' }),
   }
 })
 
@@ -16,10 +16,10 @@ describe('<Blog />', () => {
   const handleLikeMock = vi.fn()
 
   const ownerUser = {
-    username: 'usera'
+    username: 'usera',
   }
   const anotherUser = {
-    username: 'userb'
+    username: 'userb',
   }
   const blogs = [
     {
@@ -28,22 +28,21 @@ describe('<Blog />', () => {
       author: 'Author Test',
       url: 'https://test-blog.article',
       likes: 5,
-      user: ownerUser
+      user: ownerUser,
     },
     {
       id: '234',
       title: 'Second blog',
       author: 'Author 2nd',
       url: 'https://second-blog.com',
-      likes: 2
-    }
+      likes: 2,
+    },
   ]
   const blog = blogs[0]
 
   beforeEach(() => {
     render(<Blog blogs={blogs} onLike={handleLikeMock} />)
   })
-
 
   test('blog information is displayed for unauthenticated user', () => {
     const blogDiv = screen.getByText(blog.title, { exact: false }).parentElement

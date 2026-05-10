@@ -3,7 +3,7 @@ const dummy = (blogs) => {
 }
 
 const totalLikes = (blogs) => {
-  return blogs.reduce((totalLikes, blog) => totalLikes += blog.likes, 0)
+  return blogs.reduce((totalLikes, blog) => (totalLikes += blog.likes), 0)
 }
 
 const favoriteBlog = (blogs) => {
@@ -11,8 +11,10 @@ const favoriteBlog = (blogs) => {
     return null
   }
 
-  return blogs.reduce((favoriteBlog, blog) =>
-    favoriteBlog.likes >= blog.likes ? favoriteBlog : blog, blogs[0]
+  return blogs.reduce(
+    (favoriteBlog, blog) =>
+      favoriteBlog.likes >= blog.likes ? favoriteBlog : blog,
+    blogs[0],
   )
 }
 
@@ -25,7 +27,7 @@ const mostBlogs = (blogs) => {
   let authorWithMostBlogs = null
   let mostBlogsCount = 0
 
-  blogs.forEach(blog => {
+  blogs.forEach((blog) => {
     const { author } = blog
     const blogCount = authorToBlogCountMap.get(author) ?? 0
 
@@ -36,11 +38,11 @@ const mostBlogs = (blogs) => {
       mostBlogsCount = newBlogCount
       authorWithMostBlogs = author
     }
-  });
+  })
 
   return {
     author: authorWithMostBlogs,
-    blogs: authorToBlogCountMap.get(authorWithMostBlogs)
+    blogs: authorToBlogCountMap.get(authorWithMostBlogs),
   }
 }
 
@@ -53,7 +55,7 @@ const mostLikes = (blogs) => {
   let authorWithMostLikes = null
   let mostLikesCount = 0
 
-  blogs.forEach(blog => {
+  blogs.forEach((blog) => {
     const { author } = blog
     const likesCount = authorToLikesCountMap.get(author) ?? 0
 
@@ -68,7 +70,7 @@ const mostLikes = (blogs) => {
 
   return {
     author: authorWithMostLikes,
-    likes: authorToLikesCountMap.get(authorWithMostLikes)
+    likes: authorToLikesCountMap.get(authorWithMostLikes),
   }
 }
 
@@ -77,5 +79,5 @@ module.exports = {
   totalLikes,
   favoriteBlog,
   mostBlogs,
-  mostLikes
+  mostLikes,
 }

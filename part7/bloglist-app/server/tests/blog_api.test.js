@@ -39,9 +39,14 @@ describe('get API', () => {
     const newBlogSaved = await newBlog.save()
 
     const response = await api.get('/api/blogs')
-    const newBlogReturnedFromApi = response.body.find(blog => blog.title === newBlogSaved.title)
+    const newBlogReturnedFromApi = response.body.find(
+      (blog) => blog.title === newBlogSaved.title,
+    )
 
-    assert.deepStrictEqual(newBlogReturnedFromApi.id, newBlogSaved._id.toString())
+    assert.deepStrictEqual(
+      newBlogReturnedFromApi.id,
+      newBlogSaved._id.toString(),
+    )
   })
 })
 
@@ -57,7 +62,7 @@ describe('post API', () => {
     const blogsAtEnd = await Blog.find({})
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-    const titles = blogsAtEnd.map(blog => blog.title)
+    const titles = blogsAtEnd.map((blog) => blog.title)
     assert(titles.includes('Building REST APIs with Node.js'))
   })
 
@@ -76,7 +81,7 @@ describe('post API', () => {
     const noLikesBlog = {
       title: 'Building REST APIs with Node.js',
       author: 'Robert C. Martin',
-      url: 'https://example.com/building-rest-apis-nodejs'
+      url: 'https://example.com/building-rest-apis-nodejs',
     }
 
     await api
@@ -89,14 +94,16 @@ describe('post API', () => {
     const blogsAtEnd = await Blog.find({})
     assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length + 1)
 
-    const savedBlog = blogsAtEnd.find(blog => blog.title === noLikesBlog.title)
+    const savedBlog = blogsAtEnd.find(
+      (blog) => blog.title === noLikesBlog.title,
+    )
     assert.strictEqual(savedBlog.likes, 0)
   })
 
   test('if no title, returns 400 Bad Request', async () => {
     const invalidBlog = {
       author: 'Robert C. Martin',
-      url: 'https://example.com/building-rest-apis-nodejs'
+      url: 'https://example.com/building-rest-apis-nodejs',
     }
 
     await api
@@ -109,7 +116,7 @@ describe('post API', () => {
   test('if no url, returns 400 Bad Request', async () => {
     const invalidBlog = {
       title: 'Building REST APIs with Node.js',
-      author: 'Robert C. Martin'
+      author: 'Robert C. Martin',
     }
 
     await api
@@ -131,7 +138,7 @@ describe('delete API', () => {
       .expect(204)
 
     const blogsAtEnd = await Blog.find({})
-    const ids = blogsAtEnd.map(b => b.id)
+    const ids = blogsAtEnd.map((b) => b.id)
 
     assert(!ids.includes(blogToDelete.id))
 
@@ -166,7 +173,7 @@ describe('put API', () => {
     const blogToUpdate = blogsAtStart[0]
     const updatedFields = {
       likes: 555,
-      title: "New Title"
+      title: 'New Title',
     }
 
     await api
@@ -211,7 +218,7 @@ const getToken = async () => {
     .post('/api/login')
     .send({
       username: helper.blogsUser.username,
-      password: helper.blogsUser.password
+      password: helper.blogsUser.password,
     })
     .expect(200)
     .expect('Content-Type', /application\/json/)

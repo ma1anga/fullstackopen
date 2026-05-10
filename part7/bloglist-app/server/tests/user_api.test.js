@@ -40,15 +40,17 @@ describe('user post API', () => {
     const usersAtEnd = await User.find({})
     assert.strictEqual(usersAtEnd.length, helper.initialUsers.length + 1)
 
-    const addedUser = usersAtEnd.find(user => user.username === 'janedoe')
+    const addedUser = usersAtEnd.find((user) => user.username === 'janedoe')
     assert.strictEqual(addedUser.name, helper.additionalUser.name)
-    assert(bcrypt.compare(addedUser.passwordHash, helper.additionalUser.password))
+    assert(
+      bcrypt.compare(addedUser.passwordHash, helper.additionalUser.password),
+    )
   })
 
   test('invalid username, returns 400 and proper error message', async () => {
     const invalidUser = {
       ...helper.additionalUser,
-      username: 'u'
+      username: 'u',
     }
 
     const response = await api
@@ -63,7 +65,7 @@ describe('user post API', () => {
   test('invalid password, returns 400 and proper error message', async () => {
     const invalidUser = {
       ...helper.additionalUser,
-      password: 'p'
+      password: 'p',
     }
 
     const response = await api
@@ -72,7 +74,11 @@ describe('user post API', () => {
       .expect(400)
       .expect('Content-Type', /application\/json/)
 
-    assert(response.body.error.includes('password field is required and should have 3 or more symbols'))
+    assert(
+      response.body.error.includes(
+        'password field is required and should have 3 or more symbols',
+      ),
+    )
   })
 
   test('adding same user twice, returns 400 and proper error message', async () => {

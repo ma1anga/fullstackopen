@@ -10,7 +10,7 @@ describe('<CreateBlog />', () => {
     const blogValues = {
       title: 'Test blog',
       author: 'Author Test',
-      url: 'https://test-blog.article'
+      url: 'https://test-blog.article',
     }
 
     render(<CreateBlog handleCreate={createHandleMock} />)

@@ -9,8 +9,8 @@ const listWithOneBlog = [
     author: 'Edsger W. Dijkstra',
     url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
     likes: 5,
-    __v: 0
-  }
+    __v: 0,
+  },
 ]
 
 const listWithMultipleBlogs = [
@@ -20,7 +20,7 @@ const listWithMultipleBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
     likes: 5,
-    __v: 0
+    __v: 0,
   },
   {
     _id: '5a422b3a1b54a676234d17f9',
@@ -28,7 +28,7 @@ const listWithMultipleBlogs = [
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
     likes: 7,
-    __v: 0
+    __v: 0,
   },
   {
     _id: '5a422b891b54a676234d17fa',
@@ -36,7 +36,7 @@ const listWithMultipleBlogs = [
     author: 'Edsger W. Dijkstra',
     url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
     likes: 12,
-    __v: 0
+    __v: 0,
   },
   {
     _id: '5a422ba71b54a676234d17fb',
@@ -44,8 +44,8 @@ const listWithMultipleBlogs = [
     author: 'Robert C. Martin',
     url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
     likes: 10,
-    __v: 0
-  }
+    __v: 0,
+  },
 ]
 
 test('dummy returns one', () => {
@@ -77,32 +77,29 @@ describe('total likes', () => {
 
 describe('favorite blog', () => {
   const favoriteBlogOne = {
-    _id: "5a422bc61b54a676234d17fc",
-    title: "Type wars",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+    _id: '5a422bc61b54a676234d17fc',
+    title: 'Type wars',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
     likes: 100,
-    __v: 0
+    __v: 0,
   }
 
   const favoriteBlogTwo = {
-    _id: "5a422ba71b54a676234d17fb",
-    title: "TDD harms architecture",
-    author: "Robert C. Martin",
-    url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
+    _id: '5a422ba71b54a676234d17fb',
+    title: 'TDD harms architecture',
+    author: 'Robert C. Martin',
+    url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
     likes: 100,
-    __v: 0
+    __v: 0,
   }
 
-  const listWithFavoriteBlog = [
-    ...listWithMultipleBlogs,
-    favoriteBlogOne
-  ]
+  const listWithFavoriteBlog = [...listWithMultipleBlogs, favoriteBlogOne]
 
   const listWithSeveralFavoriteBlogs = [
     ...listWithMultipleBlogs,
     favoriteBlogTwo,
-    favoriteBlogOne
+    favoriteBlogOne,
   ]
 
   test('of empty list returns null', () => {
@@ -138,7 +135,7 @@ describe('most blogs', () => {
       author: 'Edsger W. Dijkstra',
       url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
       likes: 5,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422b3a1b54a676234d17f9',
@@ -146,7 +143,7 @@ describe('most blogs', () => {
       author: 'Michael Chan',
       url: 'https://reactpatterns.com/',
       likes: 7,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422b891b54a676234d17fa',
@@ -154,7 +151,7 @@ describe('most blogs', () => {
       author: 'Edsger W. Dijkstra',
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422ba71b54a676234d17fb',
@@ -162,7 +159,7 @@ describe('most blogs', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
       likes: 10,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bc61b54a676234d17fc',
@@ -170,7 +167,7 @@ describe('most blogs', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
       likes: 2,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bd11b54a676234d17fd',
@@ -178,7 +175,7 @@ describe('most blogs', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
       likes: 3,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422be01b54a676234d17fe',
@@ -186,7 +183,7 @@ describe('most blogs', () => {
       author: 'Martin Fowler',
       url: 'https://martinfowler.com/articles/refactoring-2nd-ed.html',
       likes: 9,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bf01b54a676234d17ff',
@@ -194,8 +191,8 @@ describe('most blogs', () => {
       author: 'Martin Fowler',
       url: 'https://martinfowler.com/articles/microservices.html',
       likes: 8,
-      __v: 0
-    }
+      __v: 0,
+    },
   ]
 
   test('of empty list returns null', () => {
@@ -207,8 +204,8 @@ describe('most blogs', () => {
   test('when list has only one blog, returns its author', () => {
     const result = listHelper.mostBlogs([listForMostBlogs[0]])
     const expectedResult = {
-      author: "Edsger W. Dijkstra",
-      blogs: 1
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
     }
 
     assert.deepStrictEqual(result, expectedResult)
@@ -217,8 +214,8 @@ describe('most blogs', () => {
   test('when multiple should return proper one', () => {
     const result = listHelper.mostBlogs(listForMostBlogs)
     const expectedResult = {
-      author: "Robert C. Martin",
-      blogs: 3
+      author: 'Robert C. Martin',
+      blogs: 3,
     }
 
     assert.deepStrictEqual(result, expectedResult)
@@ -233,7 +230,7 @@ describe('most likes', () => {
       author: 'Edsger W. Dijkstra',
       url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
       likes: 5,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422b891b54a676234d17fa',
@@ -241,7 +238,7 @@ describe('most likes', () => {
       author: 'Edsger W. Dijkstra',
       url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
       likes: 12,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422b3a1b54a676234d17f9',
@@ -249,7 +246,7 @@ describe('most likes', () => {
       author: 'Michael Chan',
       url: 'https://reactpatterns.com/',
       likes: 7,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422ba71b54a676234d17fb',
@@ -257,7 +254,7 @@ describe('most likes', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
       likes: 10,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bc61b54a676234d17fc',
@@ -265,7 +262,7 @@ describe('most likes', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html',
       likes: 20,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bd11b54a676234d17fd',
@@ -273,7 +270,7 @@ describe('most likes', () => {
       author: 'Robert C. Martin',
       url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
       likes: 3,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422be01b54a676234d17fe',
@@ -281,7 +278,7 @@ describe('most likes', () => {
       author: 'Martin Fowler',
       url: 'https://martinfowler.com/articles/refactoring-2nd-ed.html',
       likes: 9,
-      __v: 0
+      __v: 0,
     },
     {
       _id: '5a422bf01b54a676234d17ff',
@@ -289,8 +286,8 @@ describe('most likes', () => {
       author: 'Martin Fowler',
       url: 'https://martinfowler.com/articles/microservices.html',
       likes: 8,
-      __v: 0
-    }
+      __v: 0,
+    },
   ]
 
   test('of empty list returns null', () => {
@@ -302,8 +299,8 @@ describe('most likes', () => {
   test('when list has only one blog, returns its author', () => {
     const result = listHelper.mostLikes([listForMostLikes[0]])
     const expectedResult = {
-      author: "Edsger W. Dijkstra",
-      likes: 5
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
     }
 
     assert.deepStrictEqual(result, expectedResult)
@@ -313,7 +310,7 @@ describe('most likes', () => {
     const result = listHelper.mostLikes(listForMostLikes)
     const expectedResult = {
       author: 'Robert C. Martin',
-      likes: 33
+      likes: 33,
     }
 
     assert.deepStrictEqual(result, expectedResult)

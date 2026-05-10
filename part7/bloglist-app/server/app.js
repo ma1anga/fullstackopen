@@ -27,7 +27,9 @@ app.use(express.json())
 app.use(express.static('../client/dist'))
 
 if (process.env.NODE_ENV !== 'test') {
-  app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
+  app.use(
+    morgan(':method :url :status :res[content-length] - :response-time ms'),
+  )
 }
 
 app.use(middleware.tokenExtractor)

@@ -6,7 +6,10 @@ const Notification = ({ message, isError }) => {
   }
 
   return (
-    <Alert style={{ marginTop: 10, marginBottom: 10 }} severity={isError ? 'error' : 'success'}>
+    <Alert
+      style={{ marginTop: 10, marginBottom: 10 }}
+      severity={isError ? 'error' : 'success'}
+    >
       {message}
     </Alert>
   )

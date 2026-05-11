@@ -1,6 +1,18 @@
-import { useParams } from 'react-router-dom'
+import { Link as RouterLink, useParams } from 'react-router-dom'
 import { useUserListStore } from '../stores/userListStore'
-import { Typography } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from '@mui/material'
+import ArticleIcon from '@mui/icons-material/Article'
 
 const User = () => {
   const { id } = useParams()
@@ -15,15 +27,42 @@ const User = () => {
   }
 
   return (
-    <>
-      <h1>{user.name}</h1>
-      <h2>Added blogs</h2>
-      <ul>
-        {user.blogs.map((blog) => (
-          <li key={blog.id}>{blog.title}</li>
-        ))}
-      </ul>
-    </>
+    <Box sx={{ maxWidth: 640, mx: 'auto', mt: 4, px: 2 }}>
+      <Card elevation={3}>
+        <CardContent>
+          <Typography variant="h4" component="h1">
+            {user.name}
+          </Typography>
+
+          <Typography color="text.secondary">@{user.username}</Typography>
+
+          <Typography>{user.blogs.length} blogs added</Typography>
+
+          <Divider sx={{ my: 2 }} />
+
+          <Typography variant="h5" component="h2">
+            Added blogs
+          </Typography>
+
+          {user.blogs.length > 0 ? (
+            <List>
+              {user.blogs.map((blog) => (
+                <ListItem key={blog.id}>
+                  <ListItemIcon>
+                    <ArticleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={blog.title} />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            <Typography color="text.secondary" sx={{ mt: 1 }}>
+              No blogs added yet.
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+    </Box>
   )
 }
 

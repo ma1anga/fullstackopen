@@ -1,25 +1,32 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import CreateBlog from '../../src/components/CreateBlog'
+import useBlogStore from '../../src/stores/blogStore'
+
+const createHandleMock = vi.fn()
 
 describe('<CreateBlog />', () => {
-  test('calls create handle with proper details', async () => {
-    const createHandleMock = vi.fn()
+  beforeEach(() => {
+    createHandleMock.mockClear()
+    useBlogStore.setState({ createBlog: createHandleMock })
+  })
 
+  test('calls create handle with proper details', async () => {
     const blogValues = {
       title: 'Test blog',
       author: 'Author Test',
       url: 'https://test-blog.article',
     }
 
-    render(<CreateBlog handleCreate={createHandleMock} />)
+    render(<CreateBlog />, { wrapper: MemoryRouter })
 
     const user = userEvent.setup()
 
-    const titleInput = screen.getByLabelText('title:')
-    const authorInput = screen.getByLabelText('author:')
-    const urlInput = screen.getByLabelText('url:')
+    const titleInput = screen.getByLabelText('title')
+    const authorInput = screen.getByLabelText('author')
+    const urlInput = screen.getByLabelText('url')
 
     const createButton = screen.getByText('create')
 

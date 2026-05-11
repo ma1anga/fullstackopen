@@ -25,3 +25,12 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZ
   "title": "BRAND NEW TITLE",
   "likes": 22
 }
+
+###
+POST http://localhost:3003/api/blogs/69bc63efd93db7c26f7d4e71/comments
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXJhIiwiaWQiOiI2OWIyMDJkOGU1YWJiODRhMzE3NmZkODgiLCJpYXQiOjE3Nzg1MzM2NjR9.GqWGBGF_YuzrTODxHp6z3RdSq9coWRUALgDmeM56QEU
+
+{
+  "content": "This is my new comment on another post!"
+}

@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { MemoryRouter } from 'react-router-dom'
 import Blog from '../../src/components/Blog'
+import useBlogStore from '../../src/stores/blogStore'
+import { useUserStore } from '../../src/stores/userStore'
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom')
@@ -29,6 +32,7 @@ describe('<Blog />', () => {
       url: 'https://test-blog.article',
       likes: 5,
       user: ownerUser,
+      comments: [],
     },
     {
       id: '234',
@@ -36,15 +40,27 @@ describe('<Blog />', () => {
       author: 'Author 2nd',
       url: 'https://second-blog.com',
       likes: 2,
+      comments: [],
     },
   ]
   const blog = blogs[0]
 
   beforeEach(() => {
-    render(<Blog blogs={blogs} onLike={handleLikeMock} />)
+    handleLikeMock.mockClear()
+    useUserStore.getState().user = null
+    useBlogStore.setState({
+      blogs,
+      likeBlog: handleLikeMock,
+      addComment: vi.fn(),
+      deleteBlog: vi.fn(),
+    })
   })
 
+  const renderBlog = () => render(<Blog />, { wrapper: MemoryRouter })
+
   test('blog information is displayed for unauthenticated user', () => {
+    renderBlog()
+
     const blogDiv = screen.getByText(blog.title, { exact: false }).parentElement
 
     expect(blogDiv).toHaveTextContent(blog.title)
@@ -55,6 +71,8 @@ describe('<Blog />', () => {
   })
 
   test('buttons are not displayed for unauthenticated user', () => {
+    renderBlog()
+
     const likeButton = screen.queryByRole('button', { name: 'like' })
     const removeButton = screen.queryByRole('button', { name: 'remove' })
 
@@ -63,7 +81,8 @@ describe('<Blog />', () => {
   })
 
   test('authenticated user, but not an owner, sees only "like" button', async () => {
-    render(<Blog blogs={blogs} user={anotherUser} onLike={handleLikeMock} />)
+    useUserStore.getState().user = anotherUser
+    renderBlog()
 
     const likeButton = screen.queryByRole('button', { name: 'like' })
     const removeButton = screen.queryByRole('button', { name: 'remove' })
@@ -73,7 +92,8 @@ describe('<Blog />', () => {
   })
 
   test('authenticated user, who is an owner, sees both "like" and "remove" buttons', async () => {
-    render(<Blog blogs={blogs} user={ownerUser} onLike={handleLikeMock} />)
+    useUserStore.getState().user = ownerUser
+    renderBlog()
 
     const likeButton = screen.queryByRole('button', { name: 'like' })
     const removeButton = screen.queryByRole('button', { name: 'remove' })
@@ -83,7 +103,8 @@ describe('<Blog />', () => {
   })
 
   test('if like pressed two times, handler called two times', async () => {
-    render(<Blog blogs={blogs} user={anotherUser} onLike={handleLikeMock} />)
+    useUserStore.getState().user = anotherUser
+    renderBlog()
 
     const user = userEvent.setup()
     const likeButton = screen.getByText('like')

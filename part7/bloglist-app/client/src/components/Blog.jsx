@@ -5,21 +5,31 @@ import {
   Card,
   CardActions,
   CardContent,
+  Divider,
   Link,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Stack,
+  TextField,
   Typography,
 } from '@mui/material'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import useBlogStore from '../stores/blogStore'
 import { useNotificationStore } from '../stores/notificationStore'
 import { useUserStore } from '../stores/userStore'
+import { useField } from '../hooks'
 
 const Blog = () => {
   const { id } = useParams()
   const navigate = useNavigate()
 
   const { user } = useUserStore()
-  const { blogs, likeBlog, deleteBlog } = useBlogStore()
+  const { blogs, likeBlog, addComment, deleteBlog } = useBlogStore()
   const { setNotification, clearNotification } = useNotificationStore()
+
+  const [comment, resetComment] = useField('comment', 'text')
 
   const blog = blogs.find((b) => b.id === id)
 
@@ -39,6 +49,22 @@ const Blog = () => {
 
       setNotification(`A blog "${blog.title}" was deleted`, 'success')
       navigate('/')
+      setTimeout(() => clearNotification(), 3000)
+    }
+  }
+
+  const handleAddComment = async () => {
+    try {
+      await addComment(blog, { content: comment.value })
+      resetComment()
+
+      setNotification('Successfully added comment', 'success')
+      setTimeout(() => clearNotification(), 3000)
+    } catch (error) {
+      setNotification(
+        `Failed to add a comment: ${error.response.data.error}`,
+        'error',
+      )
       setTimeout(() => clearNotification(), 3000)
     }
   }
@@ -80,6 +106,40 @@ const Blog = () => {
             </Button>
           )}
         </CardActions>
+
+        <CardContent>
+          <Typography variant="h5" component="h3">
+            Comments
+          </Typography>
+
+          {user && (
+            <Stack direction="row" spacing={1}>
+              <TextField {...comment} size="small" />
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleAddComment}
+              >
+                add comment
+              </Button>
+            </Stack>
+          )}
+
+          {blog.comments.length > 0 ? (
+            <List>
+              {blog.comments.map((comment) => (
+                <ListItem key={comment.id}>
+                  <ListItemIcon>
+                    <AccountCircleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={comment.content} />
+                </ListItem>
+              ))}
+            </List>
+          ) : (
+            'No comments yet, be the first one!'
+          )}
+        </CardContent>
       </Card>
     </Box>
   )
